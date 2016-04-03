@@ -1,7 +1,10 @@
 var gulp = require('gulp')
   , plugins = require('gulp-load-plugins')()
+  , exec = require('gulp-exec')
   , browserify = require('browserify')
   , babelify = require('babelify')
+  , streamify = require('gulp-streamify')
+  , rename = require('gulp-rename')
   , source = require('vinyl-source-stream')
   , buffer = require('vinyl-buffer')
   , runSeq = require('run-sequence');
@@ -84,6 +87,25 @@ gulp.task('scripts', () => {
   return job.pipe(gulp.dest(paths.out + '/scripts'));
 });
 
+gulp.task('nodeapp', ()=>{
+   var src = gulp.src(paths.src + '/api/app.js');
+   
+   src
+   
+    // .transform(babelify.configure({
+    //   presets: ['es2015']
+    //  }))
+    //  .bundle()
+     .on('error', errorHandler)
+    // .pipe(source('app.js'))
+     .pipe(streamify(plugins.uglify()))
+     .pipe(buffer())
+     .pipe(plugins.ngAnnotate())
+    .pipe(plugins.rename('app.min.js'))
+    .pipe(gulp.dest(paths.out + '/api'));
+  return src;
+});
+
 
 gulp.task('scripts:watch', () => {
   return gulp.watch(paths.src + '/scripts/**/*', ['scripts']);
@@ -105,11 +127,16 @@ gulp.task('build:watch', [
 ]);
 
 // starts up a webserver with a build:watch
-gulp.task('build:serve', ['build:watch'], () => {
+gulp.task('build:serve', ['build:watch','nodeapp'], () => {
   gulp.src(paths.out)
   .pipe(plugins.webserver({
     host: /^win/.test(process.platform) ? '127.0.0.1' : '0.0.0.0',
     livereload: true,
     open: true
-  }));
+  })).pipe(exec('node ./dist/api/app.min.js', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    cb(err);
+  })
+  );
 });

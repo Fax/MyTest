@@ -1,11 +1,14 @@
 // States
 import AppState from './services/app.state';
+import DublinBusServices from './services/dublin.bus.services';
 
 
 
 // third part libraries
 import { Underscore, Geolocation } from './services/vendor.libs';
 import HttpInterceptor from './services/http.interceptor';
+//directives
+import HaBoxBusStopRt from './directives/ha.box.bus.stop.rt';
 
 
 
@@ -17,9 +20,12 @@ angular.module('homeapp',['ui.bootstrap'])
 
   .factory('_', Underscore)
   .factory('Geolocation', Geolocation)
+  
   .service('AppState', AppState)
   .service('HttpInterceptor', HttpInterceptor)
-
+  .service('DublinBusServices', DublinBusServices)
+  
+  .directive('haBoxBusStopRt',HaBoxBusStopRt)
 
   .filter('htmlTrust', ['$sce', function($sce) {
     return $sce.trustAsHtml;
