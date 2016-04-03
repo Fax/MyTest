@@ -9,7 +9,7 @@ import HttpInterceptor from './services/http.interceptor';
 
 
 
-angular.module('homeapp', ['ui.bootstrap', 'ui.sortable'])
+angular.module('homeapp',['ui.bootstrap'])
 
   .constant('system', {
     ver: '0.0.1'
@@ -17,7 +17,7 @@ angular.module('homeapp', ['ui.bootstrap', 'ui.sortable'])
 
   .factory('_', Underscore)
   .factory('Geolocation', Geolocation)
-  
+  .service('AppState', AppState)
   .service('HttpInterceptor', HttpInterceptor)
 
 
