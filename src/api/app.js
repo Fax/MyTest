@@ -1,3 +1,6 @@
+/*jshint esversion: 6 */
+import engine from '../engines/engine.js';
+
 var express = require('express');
 var app = express();
 

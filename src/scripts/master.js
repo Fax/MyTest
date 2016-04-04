@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 // States
 import AppState from './services/app.state';
 import DublinBusServices from './services/dublin.bus.services';

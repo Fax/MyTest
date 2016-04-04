@@ -1,4 +1,7 @@
+/*jshint esversion: 6 */
+
 var gulp = require('gulp')
+  , babel = require('gulp-babel')
   , plugins = require('gulp-load-plugins')()
   , exec = require('gulp-exec')
   , browserify = require('browserify')
@@ -89,19 +92,21 @@ gulp.task('scripts', () => {
 
 gulp.task('nodeapp', ()=>{
    var src = gulp.src(paths.src + '/api/app.js');
-   
+//   var b =  browserify({
+//     entries: paths.src + '/api/app.js',
+//     debug: true
+//   }).transform(babelify.configure({
+//     presets: ['es2015']
+//   })).bundle()
+  
    src
-   
-    // .transform(babelify.configure({
-    //   presets: ['es2015']
-    //  }))
-    //  .bundle()
+     .pipe(babel())
      .on('error', errorHandler)
-    // .pipe(source('app.js'))
+     .pipe(source('app.min.js'))
      .pipe(streamify(plugins.uglify()))
-     .pipe(buffer())
-     .pipe(plugins.ngAnnotate())
-    .pipe(plugins.rename('app.min.js'))
+     //.pipe(buffer())
+     //.pipe(plugins.ngAnnotate())
+     //.pipe(plugins.rename('app.min.js'))
     .pipe(gulp.dest(paths.out + '/api'));
   return src;
 });
@@ -127,7 +132,7 @@ gulp.task('build:watch', [
 ]);
 
 // starts up a webserver with a build:watch
-gulp.task('build:serve', ['build:watch','nodeapp'], () => {
+gulp.task('build:serve', ['nodeapp','build:watch'], () => {
   gulp.src(paths.out)
   .pipe(plugins.webserver({
     host: /^win/.test(process.platform) ? '127.0.0.1' : '0.0.0.0',
@@ -136,7 +141,7 @@ gulp.task('build:serve', ['build:watch','nodeapp'], () => {
   })).pipe(exec('node ./dist/api/app.min.js', function (err, stdout, stderr) {
     console.log(stdout);
     console.log(stderr);
-    cb(err);
+    console.log(err);
   })
   );
 });
